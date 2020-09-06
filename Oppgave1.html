@@ -1,0 +1,216 @@
+<html>
+<head>
+    <title>Todos</title>
+    <style>
+        *{
+            font-family: sans-serif;
+
+        }
+    .modal {
+    display: none; 
+    position: fixed;
+    z-index: 1; 
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(155, 138, 138, 0.4); 
+    }
+    .modal-innhold {
+  background-color: #fefefe;
+  margin: 5% auto;
+
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%; 
+}
+    .delete,.complete{
+        float: right;
+        color:white;
+        padding: 2px;
+        border: 0px;
+    }
+    .delete:hover,.complete:hover{
+        opacity: 0.4;
+    }
+    .delete {
+        background-color: red;
+
+    }
+    .complete {
+        background-color: #56D4C2;
+
+    }
+    .modal-innhold, label,input, button {
+        display:block;
+        margin-bottom: 20px;
+        margin-left:auto;
+        margin-right:auto;
+}
+    #create{
+        background-color: #56D4C2;
+        margin-left:auto;
+        margin-right:auto;
+        color: white;
+    }
+    #addButton{
+        background-color: white; 
+        float: left;
+        color: black; 
+        padding: 15px;
+        font-weight: 800;
+        font-size: 24pt;
+        border: 1px solid #333333;
+    }
+    #test, #descriptionChars{
+        display: inline;
+    }
+    #descriptionChars{
+        color:gray;
+        font-size: x-small;
+    }
+    #todoDisplay, .todo{
+        display: inline-block;
+    }
+    #todoDisplay, .todo,button{
+        display: inline-block;
+    }
+    
+    #addButton:hover{
+        background-color: #56D4C2;
+    }
+    .innhold{
+        display: flex;
+        flex-direction: column;
+        margin-left: auto;
+        margin-right:auto;
+        width: 80%;
+       
+    }
+    table{
+        
+    }
+    div{
+        padding: 10px;
+    }
+    table, th{
+        background-color: #E6E6E6 ;
+        color: black;
+        padding-left: 20px; 
+        padding-right: 10px;
+    }
+    #close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+
+
+    </style>
+</head>
+<body>
+    <section class="innhold">
+
+        <div><button id="addButton">+ Todo</button></div>
+        <div id="todoDisplay"></div>
+        <div><table id="completedTable"><tr><th>Title</th><th>Author<th>Description<th><th>Completed date</th></th></tr></table></div>
+    </section>
+
+    <div id="addTodoModal" class="modal">
+
+        
+        <div class="modal-innhold">
+          <span id="close">&times;</span>
+          
+          <label for="title">Title</label>
+            <input type="text" id="title" name="title"><br>
+        
+            <div class="descinput"><label id="test" for="description">Description</label><span id="descriptionChars">(30 characters left)</span></div><br>
+  <input type="text" id="description" onchange="updateChars()" maxlength="30" name="description"><br>
+  <label for="author">Author</label><br>
+  <input type="text" id="author" name="author"><br>
+  <button id="create">Create</button>
+        </div>
+      
+      </div>
+    <script>
+        
+    const todos = [];
+    const completedTodos = [];
+    var modal = document.getElementById("addTodoModal");
+    var addTodo = document.getElementById("addButton");
+    var closer = document.getElementById("close");
+    var create = document.getElementById("create");
+    
+    addTodo.addEventListener("click", function() {
+     modal.style.display = "block";
+});
+    closer.addEventListener("click", function(){
+        modal.style.display = "none";
+    });
+    create.addEventListener("click", function(){
+        var title = document.getElementById("title").value;
+        var description = document.getElementById("description").value;
+        var author = document.getElementById("author").value;
+        var todo = {theTitle:title,theDescription:description,theAuthor:author};
+        if(todos.length<3)
+        todos.push(todo);
+        else
+        alert("Max 3 Todos");
+
+        showTodos();
+    });
+    function showTodos(){
+        document.getElementById("todoDisplay").innerHTML = "";
+        for(let i = 0; i<todos.length;i++){
+        /*    const newDiv = document.createElement("div");
+            const title = document.createTextNode(todos[i].theTitle);
+            const description = document.createTextNode(todos[i].theDescription);
+            const author = document.createTextNode(todos[i].theAuthor);
+            const h4 = document.createElement("h4").appendChild(title);
+            const p = document.createElement("p").appendChild(description);
+            const pAuthor = document.createElement("p").appendChild(author);
+            newDiv.appendChild(title).appendChild(description).appendChild(author);
+            const todoList = document.getElementById("todoDisplay"); //.innerHTML += i + " " + todos.length;
+            todoList.appendChild(pAuthor); */
+            document.getElementById("todoDisplay").innerHTML += "<div class=\"todo\"><h4>" + todos[i].theTitle + "</h4><p>" + todos[i].theDescription + "</p><p>" + todos[i].theAuthor + "</p><div><button class=\"delete\" onclick=\"deleter("+i+")\">Delete</button><button class=\"complete\" onclick=\"complete("+i+")\">Complete</button></div></div>";
+        }
+        for(let i = 0; i<completedTodos.length;i++){
+           
+        }
+    }
+    function deleter(i){
+        todos.splice(i,1);
+        showTodos();
+    }
+    function complete(i){
+        
+        var completed = todos[i];
+        completed.date=new Date();
+        var completedTable = document.getElementById("completedTable");
+        var row = completedTable.insertRow(-1);
+        var cell = [];
+        for(var i = 0; i<4;i++){
+            cell[i] = row.insertCell(i);
+        }
+        cell[0].innerHTML = completed.theTitle;
+        cell[1].innerHTML = completed.theAuthor;
+        cell[2].innerHTML = completed.theDescription;
+        cell[3].innerHTML = completed.date;
+    }
+    function updateChars(){
+        var x  = document.getElementById("description").value.length;
+        document.getElementById("descriptionChars").innerHTML = "("+(30-x)+ "characters left)";
+    }
+    window.onclick = function(event) {
+     if (event.target == modal) {
+        modal.style.display = "none";
+  }
+}
+    </script>
+</body>
+</html>
