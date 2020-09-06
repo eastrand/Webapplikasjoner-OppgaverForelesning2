@@ -117,7 +117,7 @@
 
         <div><button id="addButton">+ Todo</button></div>
         <div id="todoDisplay"></div>
-        <div><table id="completedTable"><tr><th>Title</th><th>Author<th>Description<th><th>Completed date</th></th></tr></table></div>
+        <div><h2>Completed todos:</h2><button onclick="sort()">Sort the other way</button><table id="completedTable"><tr><th>Title</th><th>Author<th>Description<th><th>Completed date</th></th></tr></table></div>
     </section>
 
     <div id="addTodoModal" class="modal">
@@ -138,7 +138,7 @@
       
       </div>
     <script>
-        
+    var sortVar = false;    
     const todos = [];
     const completedTodos = [];
     var modal = document.getElementById("addTodoModal");
@@ -179,8 +179,22 @@
             todoList.appendChild(pAuthor); */
             document.getElementById("todoDisplay").innerHTML += "<div class=\"todo\"><h4>" + todos[i].theTitle + "</h4><p>" + todos[i].theDescription + "</p><p>" + todos[i].theAuthor + "</p><div><button class=\"delete\" onclick=\"deleter("+i+")\">Delete</button><button class=\"complete\" onclick=\"complete("+i+")\">Complete</button></div></div>";
         }
-        for(let i = 0; i<completedTodos.length;i++){
-           
+        var completedTable = document.getElementById("completedTable");
+        completedTable.getElementsByTagName("tbody")[0].innerHTML = completedTable.rows[0].innerHTML;
+        var tempComps = completedTodos;
+        if(sortVar){
+            tempComps = completedTodos.reverse;
+        }
+        for(let i = 0; i<tempComps.length;i++){
+            var row = completedTable.insertRow(-1);
+            var cell = [];
+        for(let j = 0; j<4;j++){
+            cell[j] = row.insertCell(j);
+        }
+        cell[0].innerHTML = tempComps[i].theTitle;
+        cell[1].innerHTML = tempComps[i].theAuthor;
+        cell[2].innerHTML = tempComps[i].theDescription;
+        cell[3].innerHTML = tempComps[i].date;
         }
     }
     function deleter(i){
@@ -191,7 +205,9 @@
         
         var completed = todos[i];
         completed.date=new Date();
-        var completedTable = document.getElementById("completedTable");
+        completedTodos.push(completed);
+        todos.splice(i,1);
+        /* var completedTable = document.getElementById("completedTable");
         var row = completedTable.insertRow(-1);
         var cell = [];
         for(var i = 0; i<4;i++){
@@ -200,7 +216,8 @@
         cell[0].innerHTML = completed.theTitle;
         cell[1].innerHTML = completed.theAuthor;
         cell[2].innerHTML = completed.theDescription;
-        cell[3].innerHTML = completed.date;
+        cell[3].innerHTML = completed.date; */
+        showTodos();
     }
     function updateChars(){
         var x  = document.getElementById("description").value.length;
@@ -211,6 +228,14 @@
         modal.style.display = "none";
   }
 }
+    function sort(){
+        if(sortVar==true)
+            sortVar=false;
+        else
+            sortVar = true;
+        showTodos();
+    }
+    
     </script>
 </body>
 </html>
